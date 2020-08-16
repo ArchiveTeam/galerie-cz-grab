@@ -49,10 +49,10 @@ if not WGET_AT:
 #
 # Update this each time you make a non-cosmetic change.
 # It will be added to the WARC files and reported to the tracker.
-VERSION = '20200816.01'
+VERSION = '20200816.02'
 USER_AGENT = 'Archive Team'
 TRACKER_ID = 'galerie-cz'
-TRACKER_HOST = 'YOU ARE WRONG trackerproxy.meo.ws'
+TRACKER_HOST = 'trackerproxy.meo.ws'
 
 
 ###########################################################################

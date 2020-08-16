@@ -41,19 +41,11 @@ end
 allowed = function(url, parenturl, force)
   if string.match(url, "'+")
     or string.match(url, "[<>\\%*%$;%^%[%],%(%){}\n]")
-	or string.match(url, "^https?://gs%.jxs%.cz/jquery/") -- Common UI things
-	or url == "http://gs.jxs.cz/css/main.css?18"
-	or url == "http://gs.jxs.cz/common.packed.js?101"
-	or url == "http://gs.jxs.cz/presentation.packed.js?101"
-	or url == "http://gs.jxs.cz/video/player.swf"
-	or url == "http://gs.jxs.cz/crossdomain/cross2.packed.js?2"
-	or url == "http://gs.jxs.cz/css/mainIE6.css"
-	or url == "http://gs.jxs.cz/png-fix.js"
-	or url == "http://gs.jxs.cz/css/mainIE.css"
-	or url == "http://" .. item_value .. ".galerie.cz/zapomenute-heslo" -- Password reset page
-	or url == "http://" .. item_value .. ".galerie.cz/registrace"
-	or string.match(url, "^https?://gs%.jxs%.cz/img/") -- Static UI images
-	or string.match(url, "^https?://nd%d%d.jxs.cz/%d%d%d/%d%d%d/?$") -- Bare directories
+    or string.match(url, "^https?://gs%.jxs%.cz/jquery/") -- Common UI things
+    or url == "http://" .. item_value .. ".galerie.cz/zapomenute-heslo" -- Password reset page
+    or url == "http://" .. item_value .. ".galerie.cz/registrace"
+    or string.match(url, "^https?://gs%.jxs%.cz/img/") -- Static UI images
+    or string.match(url, "^https?://nd%d%d.jxs.cz/%d%d%d/%d%d%d/?$") -- Bare directories
     or not (
       string.match(url, "^https?://[^/]*jxs%.cz/")
       or string.match(url, "^https?://[^/]*galerie%.cz/")
@@ -158,32 +150,28 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
     and not string.match(url, "^https?://[^/]*jxs%.cz/") then
     html = read_file(file)
     if string.match(url, "^https?://[^%.]+%.galerie%.cz/$") then
-		-- Not sure why this is included (discovery)? TODO
       check(url .. "robots.txt")
     end
-	
-	if string.match(url, "^http://[^/]+%.galerie.cz/%d+$") then
-		local id = string.gsub(string.match(url, "/%d+$"), "/", "")
-		check("http://hikari-chan.galerie.cz/.ajax/image/read?info=1&id=" .. id)
-	end
-	
-	-- Get thumbnails in all sizes
-	-- Many will 404, but there's a fairly complex function to reverse-engineer that computes the right ones, and these 404s are cheap (considering the bottleneck here is the main site)
-	local m = string.match(html, "new GJsImages%([^\n]+%);%s*\n")
-	if m ~= nil then
-		m = string.gsub(m, "^new GJsImages%(", "")
-		m = string.gsub(m, "%);%s*\n", "")
-		local j = JSON:decode(m)
-		for i, v in ipairs(j) do
-			check(v["path"] .. "/" .. v["file"] .. "_" .. "u"  .. v["ext"] .. "?" .. v["modified"])
-			check(v["path"] .. "/" .. v["file"] .. "_" .. "v1" .. v["ext"] .. "?" .. v["modified"])
-			check(v["path"] .. "/" .. v["file"] .. "_" .. "v2" .. v["ext"] .. "?" .. v["modified"])
-			check(v["path"] .. "/" .. v["file"] .. "_" .. "p"  .. v["ext"] .. "?" .. v["modified"])
-			check(v["path"] .. "/" .. v["file"] .. "_" .. "o2" .. v["ext"] .. "?" .. v["modified"])
-		end
-	end
-	
-	
+    if string.match(url, "^http://[^/]+%.galerie.cz/%d+$") then
+      local id = string.gsub(string.match(url, "/%d+$"), "/", "")
+      check("http://" .. item_value .. ".galerie.cz/.ajax/image/read?info=1&id=" .. id)
+    end
+    -- Get thumbnails in all sizes
+    -- Many will 404, but there's a fairly complex function to reverse-engineer that computes
+    -- the right ones, and these 404s are cheap (considering the bottleneck here is the main site)
+    local m = string.match(html, "new GJsImages%([^\n]+%);%s*\n")
+    if m ~= nil then
+      m = string.gsub(m, "^new GJsImages%(", "")
+      m = string.gsub(m, "%);%s*\n", "")
+      local j = JSON:decode(m)
+      for i, v in ipairs(j) do
+        check(v["path"] .. "/" .. v["file"] .. "_" .. "u"  .. v["ext"] .. "?" .. v["modified"])
+        check(v["path"] .. "/" .. v["file"] .. "_" .. "v1" .. v["ext"] .. "?" .. v["modified"])
+        check(v["path"] .. "/" .. v["file"] .. "_" .. "v2" .. v["ext"] .. "?" .. v["modified"])
+        check(v["path"] .. "/" .. v["file"] .. "_" .. "p"  .. v["ext"] .. "?" .. v["modified"])
+        check(v["path"] .. "/" .. v["file"] .. "_" .. "o2" .. v["ext"] .. "?" .. v["modified"])
+      end
+    end
     for newurl in string.gmatch(string.gsub(html, "&quot;", '"'), '([^"]+)') do
       checknewurl(newurl)
     end
