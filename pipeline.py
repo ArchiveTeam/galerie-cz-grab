@@ -49,7 +49,7 @@ if not WGET_AT:
 #
 # Update this each time you make a non-cosmetic change.
 # It will be added to the WARC files and reported to the tracker.
-VERSION = '20200816.03'
+VERSION = '20200816.04'
 USER_AGENT = 'Archive Team'
 TRACKER_ID = 'galerie-cz'
 TRACKER_HOST = 'trackerproxy.meo.ws'
@@ -206,7 +206,7 @@ class WgetArgs(object):
 project = Project(
     title = 'galerie.cz',
     project_html = '''
-    <img class="project-logo" alt="logo" src="https://www.archiveteam.org/images/e/ea/Blog-cz-logo.png" height="50px"/>
+    <img class="project-logo" alt="logo" src="https://www.archiveteam.org/images/f/f8/Galerie-cz-logo.png" height="50px"/>
     <h2>galerie.cz <span class="links"><a href="https://galerie.cz/">Website</a> &middot; <a href="http://tracker.archiveteam.org/galerie-cz/">Leaderboard</a></span></h2>
     '''
 )
