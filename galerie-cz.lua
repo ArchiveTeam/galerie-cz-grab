@@ -74,6 +74,8 @@ allowed = function(url, parenturl, force)
   local match = string.match(url, "^https?://([^%.]+)%.galerie%.cz/")
   if match and match == item_value then
     return true
+  elseif match then
+    discovered[match] = true
   end
   
   return false
@@ -152,8 +154,8 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
     if string.match(url, "^https?://[^%.]+%.galerie%.cz/$") then
       check(url .. "robots.txt")
     end
-    if string.match(url, "^http://[^/]+%.galerie.cz/%d+$") then
-      local id = string.gsub(string.match(url, "/%d+$"), "/", "")
+    if string.match(url, "^http://[^/]+%.galerie.cz/[^/]+/%d+$") then
+      local id = string.match(url, "(%d+)$")
       check("http://" .. item_value .. ".galerie.cz/.ajax/image/read?info=1&id=" .. id)
     end
     -- Get thumbnails in all sizes
@@ -259,6 +261,14 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
   end
 
   return wget.actions.NOTHING
+end
+
+wget.callbacks.finish = function(start_time, end_time, wall_time, numurls, total_downloaded_bytes, total_download_time)
+  local file = io.open(item_dir .. '/' .. warc_file_base .. '_data.txt', 'w')
+  for blog, _ in pairs(discovered) do
+    file:write("galerie:" .. blog .. "\n")
+  end
+  file:close()
 end
 
 wget.callbacks.before_exit = function(exit_status, exit_status_string)
