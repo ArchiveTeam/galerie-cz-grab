@@ -81,6 +81,24 @@ allowed = function(url, parenturl, force)
   return false
 end
 
+wget.callbacks.lookup_host = function(host)
+  if host == item_value:lower() .. ".galerie.cz" then
+    return "192.124.249.106"
+  end
+  
+  -- Weird addresses are to get around a wget-lua bug; I'll put in a PR soon.
+  -- (Specifically, the point here is to make sure that all the strings this
+  -- function ever returns have the same length.)
+  if host:lower() == "nd01.jxs.cz" then return "0X2e.234.102.11" end
+  if host:lower() == "nd02.jxs.cz" then return "0X2e.234.102.12" end
+  if host:lower() == "nd03.jxs.cz" then return "0X2e.234.102.13" end
+  if host:lower() == "nd04.jxs.cz" then return "0X2e.234.102.14" end
+  if host:lower() == "nd05.jxs.cz" then return "0X2e.234.102.15" end
+  if host:lower() == "nd06.jxs.cz" then return "0X2e.234.102.16" end
+  
+  return nil
+end
+
 wget.callbacks.download_child_p = function(urlpos, parent, depth, start_url_parsed, iri, verdict, reason)
     local url = urlpos["url"]["url"]
   local html = urlpos["link_expect_html"]
